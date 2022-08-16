@@ -2,6 +2,7 @@ import os
 from data.base_dataset import BaseDataset, get_transform
 from data.image_folder import make_dataset
 from PIL import Image
+import torchvision.transforms.functional
 import numpy as np
 import random
 
@@ -56,7 +57,8 @@ class UnalignedDataset(BaseDataset):
             index_B = random.randint(0, self.B_size - 1)
         B_path = self.B_paths[index_B]
         A_img = Image.open(A_path).convert('RGB')
-        A_img = np.array(A_img)[:, 180:1120, :] # resize
+        A_img = torchvision.transforms.functional.crop(A_img, height=A_img.height, top=0, left=180, width=1120-180)
+        # A_img = np.array(A_img)[:, 180:1120, :] # resize
         B_img = Image.open(B_path).convert('RGB')
         # apply image transformation
         A = self.transform_A(A_img)
